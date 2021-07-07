@@ -1,4 +1,5 @@
 ﻿using ConnexForQuickBooks.Model;
+using ConnexForQuickBooks.Model.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Text.Encodings.Web;
@@ -8,19 +9,25 @@ namespace ConnexAPI.Web
 {
     public class ConnexController : Controller
     {
+        /// <summary>
+        /// We send the user name and password, using basic auth.
+        /// For more details, visit https://jasonwatmore.com/post/2019/10/21/aspnet-core-3-basic-authentication-tutorial-with-example-api
+        /// </summary>
+        /// <returns></returns>
         public IActionResult AuthenticateToWebService()
         {
             return Json("OK");
         }
 
         /// <summary>
-        /// Syncs orders from QuickBooks to your website. Our tool downloads orders, holds them in a queue, and this is how they are returned.
+        /// Syncs orders from QuickBooks to your website. 
+        /// Our tool downloads orders, holds them in a queue, and sends them to your website when the QuickBooks Web Connector is run.
+        /// This is how orders will look, when our tool sends them to QuickBooks.
         /// </summary>
         /// <returns></returns>
         public IActionResult CreateOrders()
         {
             JMAUser user = MakeOrder();
-
             return Json(user);
         }
 
@@ -31,15 +38,8 @@ namespace ConnexAPI.Web
         public IActionResult Orders(string orderNumber)
         {
             JMAUser user = MakeOrder();
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            };
-
             return Json(user);
         }
-
 
         /// <summary>
         /// Syncs orders from your website to QuickBooks by date. Our tool downloads orders, holds them in a queue, and this is how they are returned.
@@ -49,7 +49,7 @@ namespace ConnexAPI.Web
         /// <param name="date_modified_max">End date for date modified. Used to pull sales by date modified and order status.</param>
         /// <param name="date_created_min">Begin date for date created. Used to pull the most recent sales.</param>
         /// <param name="date_created_max">End date for date created. Used to pull the most recent sales.</param>
-        /// <param name="status">Shipped, Completed, etc.</param>
+        /// <param name="orderStatus">Shipped, Completed, etc.</param>
         /// <param name="storeName">Amazon, eBay, another filter used to sync orders.</param>
         /// <returns></returns>
         public IActionResult Orders(DateTime date_modified_min, DateTime date_modified_max, DateTime date_created_min, DateTime date_created_max, string orderStatus, string storeName)
@@ -58,12 +58,25 @@ namespace ConnexAPI.Web
 
             JMAOrder order = GetOrder();
 
+            AddSalesOrder(user);
+
             user.Orders.Add(order);
             user.CancelledOrders.Add(order);
 
             return Json(user);
         }
 
+        /// <summary>
+        /// Creates a sales order in QuickBooks. This setting allows the developer to choose the type of transaction to create in QuickBooks.
+        /// If your order status was unshipped, then sales order would be acceptable.
+        /// </summary>
+        /// <param name="user"></param>
+        private void AddSalesOrder(JMAUser user)
+        {
+            JMAOrder order2 = GetOrder();
+            order2.InvoiceMode = InvoiceModeEnum.SalesOrders;
+            user.Orders.Add(order2);
+        }
 
         private JMAUser MakeOrder()
         {
