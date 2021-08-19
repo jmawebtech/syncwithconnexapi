@@ -88,6 +88,10 @@ namespace ConnexAPI.Web
             return user;
         }
 
+        /// <summary>
+        /// JMAOrder.ReferenceNumber is used for deposit matching. In this case, we mapped the charge ID from Stripe.
+        /// </summary>
+        /// <returns></returns>
         private JMAOrder GetOrder()
         {
             JMAOrder order = new JMAOrder();
@@ -107,6 +111,7 @@ namespace ConnexAPI.Web
                 LastName = "Example"
             };
 
+            order.ReferenceNumber = "ch_3JQ3NqBozibG58Lk2KbwpEV3";
             order.ShippingAddress = order.BillingAddress;
 
             order.OrderNumber = "1";
