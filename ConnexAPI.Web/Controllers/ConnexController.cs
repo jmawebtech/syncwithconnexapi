@@ -1,7 +1,10 @@
-﻿using ConnexForQuickBooks.Model;
+﻿using ConnexAPI.Model;
+using ConnexForQuickBooks.Model;
 using ConnexForQuickBooks.Model.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
@@ -133,5 +136,57 @@ namespace ConnexAPI.Web
             order.TotalInclTax = 106.25M;
             return order;
         }
+
+        /// <summary>
+        /// Our tool sends a list of products to your website.
+        /// Product SKU is QuickBooks item name.
+        /// Product StockQuantity is the stock level from QuickBooks.
+        /// </summary>
+        /// <param name="products"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult Inventory([FromBody] List<JMAProduct> products)
+        {
+            //Perform some updates on your side with List<JMAProduct>
+
+            JMAUpdateInventoryResponse response = new JMAUpdateInventoryResponse();
+            response.ProductSyncSuccess.AddRange(products);
+            response.ProductSkusErrors.Add("TestProduct", "No matching SKU.");
+
+            return Json(response);
+        }
+
+        /// <summary>
+        /// --CODE Inside of Connex that sends data to UpdateProducts. We send a post request 
+        /// Send stock and pricing updates from your custom store to QuickBooks.
+        /// </summary>
+        //public override JMAInventoryResponse UpdateProducts(List<JMAProduct> products)
+        //{
+        //    JMAInventoryResponse inventoryResponse = new JMAInventoryResponse();
+
+        //    string json = JsonConvert.SerializeObject(products);
+        //    string inventoryUrl = String.Format("{0}/inventory", QBUrl);
+        //    string result = PostPutJson(inventoryUrl, json, "PUT");
+        //    JMAUpdateInventoryResponse response = JsonConvert.DeserializeObject<JMAUpdateInventoryResponse>(result);
+
+        //    foreach (JMAProduct product in response.ProductSyncSuccess)
+        //        inventoryResponse.ProductsThatSyncedSuccessfully.Add(product.Sku);
+
+        //    List<JMAErrorMessage> messages = new List<JMAErrorMessage>();
+        //    foreach (KeyValuePair<string, string> pair in response.ProductSkusErrors)
+        //    {
+        //        messages.Add(new JMAErrorMessage()
+        //        {
+        //            Severity = MessageSeverity.Error,
+        //            Message = pair.Value
+        //        });
+        //    }
+
+        //    inventoryResponse.Messages.AddRange(messages);
+
+        //    return inventoryResponse;
+        //}
+
+
     }
 }
