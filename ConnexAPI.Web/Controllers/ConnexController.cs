@@ -88,6 +88,19 @@ namespace ConnexAPI.Web
             JMAOrder order = GetOrder();
 
             user.Orders.Add(order);
+
+            //We link order.OrderNumber with payment.OrderNumber. Allows our tool to sync payments with QuickBooks.
+            JMAPayment payment = new JMAPayment()
+            {
+                ReferenceNumber = order.OrderNumber,
+                OrderNumber = order.OrderNumber,
+                CreditCardName = order.CreditCardName,
+                PaymentDate = order.CreationDate,
+                PaymentAmount = order.Total
+            };
+
+            user.Payments.Add(payment);
+
             return user;
         }
 

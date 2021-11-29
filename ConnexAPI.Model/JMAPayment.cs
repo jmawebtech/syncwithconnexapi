@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ConnexForQuickBooks.Model
 {
@@ -10,35 +7,52 @@ namespace ConnexForQuickBooks.Model
     {
         public JMAPayment()
         {
-            Order = new JMAOrder();
         }
 
-        public int PaymentMethodId { get; set; }
+        /// <summary>
+        /// Payment method, like VISA.
+        /// </summary>
         public string CreditCardName { get; set; }
+
+        /// <summary>
+        /// Deposit account, like undeposited funds.
+        /// </summary>
         public string DepositAccount { get; set; }
-        public int Id { get; set; }
-        public bool AutoApply { get; set; }
-        public int OrderId { get; set; }
-        public JMAOrder Order { get; set; }
-        public string PaymentType { get; set; }
+
+        /// <summary>
+        /// Amount of payment.
+        /// </summary>
         public decimal PaymentAmount { get; set; }
+
+        /// <summary>
+        /// Date order was paid.
+        /// </summary>
         public DateTime PaymentDate { get; set; }
+
+        /// <summary>
+        /// Used to link payments and invoices in QuickBooks.
+        /// </summary>
         public string QuickBooksInvoiceTxnId { get; set; }
+
+        /// <summary>
+        /// Alternate number used to identify payments.
+        /// </summary>
         public string ReferenceNumber { get; set; }
+
+        /// <summary>
+        /// Decides whether to sync payment to QuickBooks.
+        /// </summary>
         public bool SkipPayment { get; set; }
-        public string PaymentStatus { get; set; }
 
-        public string OrderNumber
-        {
-            get
-            {
-                return Order.OrderNumber;
-            }
-        }
+        /// <summary>
+        /// Ties payment to order in QuickBooks.
+        /// </summary>
+        public string OrderNumber { get; set; }
 
-        public DateTime ModifiedDate { get; set; }
-        public string OriginalOrderId { get; set; }
-        public string Note { get; set; }
+        /// <summary>
+        /// If the order has multiple currencies, this is the total paid by the customer.
+        /// Used to convert an order from one currency to another.
+        /// </summary>
         public decimal PaymentAmountInCustomerCurrency { get; set; }
     }
 }
