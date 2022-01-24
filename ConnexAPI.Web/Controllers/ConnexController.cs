@@ -35,6 +35,74 @@ namespace ConnexAPI.Web
         }
 
         /// <summary>
+        /// Set purchase type to PO to create purchase orders in QuickBooks.
+        /// Bill is preferred because it decrements inventory.
+        /// Example URL is 
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult GetPurchases(DateTime date_modified_min, DateTime date_modified_max, DateTime date_created_min, DateTime date_created_max, string orderStatus, string storeName)
+        {
+            JMAUser user = MakeBill();
+            return Json(user);
+        }
+
+        private static JMAUser MakeBill()
+        {
+            JMAUser user = new JMAUser();
+            user.Purchases.Add(new JMAOrder()
+            {
+                OrderNumber = "123",
+                Vendor = "Test Vendor",
+                BillingAddress = new JMAAddress()
+                {
+                    Company = "Test Vendor",
+                    FirstName = "Test",
+                    LastName = "User",
+                    Address1 = "123 Main St.",
+                    City = "Watertown",
+                    RegionName = "MA",
+                    PostalCode = "02472",
+                    TwoLetterIsoCode = "US"
+                },
+                ShippingAddress = new JMAAddress()
+                {
+                    Company = "Test Vendor",
+                    FirstName = "Test",
+                    LastName = "User2",
+                    Address1 = "1 Main St.",
+                    City = "Watertown",
+                    RegionName = "MA",
+                    PostalCode = "02472",
+                    TwoLetterIsoCode = "US"
+                },
+                PurchaseType = JMAPurchaseType.Bill,
+                CreationDate = new DateTime(2022, 1, 1),
+                OrderDetails = new List<JMAOrderDetail>()
+                {
+                    new JMAOrderDetail()
+                    {
+                        Sku = "Test",
+                        Quantity = 1,
+                        PriceExclTax = 50,
+                        PriceInclTax = 50
+                    },
+                    new JMAOrderDetail()
+                    {
+                        Sku = "Test2",
+                        Quantity = 1,
+                        PriceExclTax = 50,
+                        PriceInclTax = 50
+                    },
+                },
+                Total = 100,
+                TotalExclTax = 100,
+                TotalInclTax = 100
+            });
+            return user;
+        }
+
+
+        /// <summary>
         /// Used to pull orders by order number
         /// </summary>
         /// <returns></returns>
