@@ -40,7 +40,7 @@ namespace ConnexAPI.Web
         /// Example URL is 
         /// </summary>
         /// <returns></returns>
-        public IActionResult GetPurchases(DateTime date_modified_min, DateTime date_modified_max, DateTime date_created_min, DateTime date_created_max, string orderStatus, string storeName)
+        public IActionResult PurchaseOrders(DateTime date_modified_min, DateTime date_modified_max, DateTime date_created_min, DateTime date_created_max, string orderStatus, string storeName)
         {
             JMAUser user = MakeBill();
             return Json(user);
